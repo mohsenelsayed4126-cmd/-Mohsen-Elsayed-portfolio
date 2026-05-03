@@ -1,16 +1,18 @@
 /* ── CURSOR + TRAIL ── */
 const isFine = window.matchMedia('(pointer:fine)').matches;
+const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
 const cd = document.getElementById('cd'), cr = document.getElementById('cr');
 
 let mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my;
 const TRAIL = 14, trails = [];
 
-if (isFine) {
+if (isFine && !isMobile) {
   for (let i = 0; i < TRAIL; i++) {
     const d = document.createElement('div');
     d.className = 'td';
     const s = Math.max(1.5, 4 - i * 0.18);
-    d.style.cssText = `width:${s}px;height:${s}px;background:var(--g);opacity:${(1 - i / TRAIL) * 0.35};z-index:${9994 - i}`;
+    d.style.cssText = `width:${s}px;height:${s}px;background:var(--g);opacity:${(1 - i / TRAIL) * 0.35};z-index:${9994 - i};pointer-events:none`;
     document.body.appendChild(d);
     trails.push({ el: d, x: mx, y: my });
   }
@@ -66,7 +68,16 @@ function handleHam() {
 }
 
 ham.addEventListener('click', handleHam);
+ham.addEventListener('touchend', function(e) {
+  e.preventDefault();
+  handleHam();
+});
+
 nov.addEventListener('click', closeSB);
+nov.addEventListener('touchend', function(e) {
+  e.preventDefault();
+  closeSB();
+});
 
 document.querySelectorAll('.nl a').forEach(a => {
   a.addEventListener('click', function (e) {
@@ -94,6 +105,10 @@ function handleTheme() {
 }
 
 ttog.addEventListener('click', handleTheme);
+ttog.addEventListener('touchend', function(e) {
+  e.preventDefault();
+  handleTheme();
+});
 
 /* ── TYPING ── */
 const phrases = ['Data Analyst', 'Power BI Developer', 'SQL Specialist', 'Python Automator', 'BI Storyteller'];
@@ -213,7 +228,16 @@ const hireBtn = document.getElementById('hireBtn');
 const vProj   = document.getElementById('vProj');
 
 hireBtn.addEventListener('click', handleHire);
+hireBtn.addEventListener('touchend', function(e) {
+  e.preventDefault();
+  handleHire(e);
+});
+
 vProj.addEventListener('click', handleViewProj);
+vProj.addEventListener('touchend', function(e) {
+  e.preventDefault();
+  handleViewProj(e);
+});
 
 /* ── PARTICLES (desktop only) ── */
 function spawnP() {
@@ -225,13 +249,13 @@ function spawnP() {
   const c = cols[Math.floor(Math.random() * cols.length)];
   const dur = Math.random() * 14 + 8;
 
-  p.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}vw;bottom:-10px;background:${c};animation-duration:${dur}s;animation-delay:${Math.random()*4}s;box-shadow:0 0 ${s*3}px ${c}`;
+  p.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}vw;bottom:-10px;background:${c};animation-duration:${dur}s;animation-delay:${Math.random()*4}s;box-shadow:0 0 ${s*3}px ${c};pointer-events:none`;
 
   document.body.appendChild(p);
   setTimeout(() => p.remove(), (dur + 4) * 1000);
 }
 
-if (!('ontouchstart' in window)) {
+if (!isMobile) {
   setInterval(spawnP, 1100);
 }
 
